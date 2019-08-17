@@ -1,0 +1,33 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "webpack-dev-server --debug --hot --port 8090 --host 0.0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bukovsky/url-shortener.git"
+  },
+  "author": "Bukovskii Pavel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bukovsky/url-shortener/issues"
+  },
+  "homepage": "https://github.com/bukovsky/url-shortener#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "mongodb": "^3.3.0",
+    "mongoose": "^5.6.9",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5"
+  }
+}
