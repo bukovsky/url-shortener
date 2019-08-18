@@ -10,8 +10,8 @@ import './App.less';
 const App = CreateReactClass({
   getInitialState: function() {
     return {
-      originalLink: '',
-      shortLink: '',
+      originalURL: '',
+      shortURL: '',
       hash: '',
       errors: ''
     };
@@ -20,44 +20,44 @@ const App = CreateReactClass({
     return (
       <div className='app'>
         <h2 className='app__header'>URL Shortener</h2>
-        <Form errors={ this.state.errors } handleSendOriginalURL={ this.sendOriginalURL } handleChangeOriginalURL={ this.changeOriginalURL } handleHash={ this.sendHash } handleChangeHash={ this.changeHash } originalLink={ this.state.originalLink } shortLink={ this.state.shortLink } hash={ this.state.hash } />
+        <Form errors={ this.state.errors } handleSendOriginalURL={ this.sendOriginalURL } handleChangeOriginalURL={ this.changeOriginalURL } handleHash={ this.sendHash } handleChangeHash={ this.changeHash } originalURL={ this.state.originalURL } shortURL={ this.state.shortURL } hash={ this.state.hash } />
       </div>
     );
   },
   changeOriginalURL(event) {
-    this.setState({originalLink: event.target.value});
+    this.setState({originalURL: event.target.value});
   },
   sendOriginalURL() {
     // Меняем состояние приложения
     axios.post(
       'http://localhost:8080/', 
       { 
-        "originalLink": this.state.originalLink 
+        "originalURL": this.state.originalURL 
       }
     ).then(response => {
-      this.setState({ shortLink: response.data.shortLink, hash: response.data.hash, errors: ''});
+      this.setState({ shortURL: response.data.shortURL, hash: response.data.hash, errors: ''});
     }, err => {
-      this.setState({ shortLink: '', errors: err.response.data, hash: '' });
+      this.setState({ shortURL: '', errors: err.response.data, hash: '' });
     });
   },
   changeHash(event) {
-    this.setState({handleChangeHash: event.target.value});
+    this.setState({hash: event.target.value});
   },
   sendHash() {
     // Меняем состояние приложения
 //    axios.post(
 //      'http://localhost:8080/', 
 //      { 
-//        "originalLink": this.state.originalLink 
+//        "originalURL": this.state.originalURL 
 //      }
 //    ).then(response => {
-//      this.setState({ shortLink: response.data.shortLink, hash: response.data.hash, errors: ''});
+//      this.setState({ shortURL: response.data.shortURL, hash: response.data.hash, errors: ''});
 //    }, err => {
-//      this.setState({ shortLink: '', errors: err.response.data });
+//      this.setState({ shortURL: '', errors: err.response.data });
 //    });
   },
   changeShortURL(event) {
-    this.setState({shortlLink: event.target.value});
+    this.setState({shortlURL: event.target.value});
   }
 });
 

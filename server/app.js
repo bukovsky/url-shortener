@@ -1,6 +1,5 @@
 import express from "express";
 import cors from 'cors'; // разрешает использовать междоменные ajax запросы
-import parse from 'url-parse';
 import request from 'request';
 
 import bodyParser from "body-parser";
@@ -28,28 +27,43 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
 //  db.createUrl(req.body).then(() => res.send('Ссылка успешно добавлена'), err => res.send('Ошибка: '+err));
-  try {
-    var result = parse(req.body.originalLink, true),
-        status = 200,
-        response = ''; // The second argument for a query parsing
-    request(req.body.originalLink, function (error, response, body) {
-      if (error !== undefined && error !== null) {
-        status = 400;
-        response = 'URL is not valid';
-        console.error('error:', error);
+  if (req.body.originalURL) {
+    let originalURL = req.body.originalURL;
+    db.findOriginalURL(originalURL).then(data => {
+      if (data && data.hash) {
+        let shortURL = apiPrefix + '/' + data.hash,
+            clientResponse = {'hash': data.hash, 'shortURL': shortURL};
+        return res.status(200).send(clientResponse);
+      } else {
+        try {
+          request(originalURL, function (error, response, body) {
+            if (error !== undefined && error !== null) {
+              console.error('error:', error);
+              return res.status(400).send('URL is not valid');
+            }
+            if (response && response.statusCode == 200) {
+              let hash = [...Array(8)].map(i=>(~~(Math.random()*36)).toString(36)).join(''),
+                  shortURL = apiPrefix + '/' + hash;
+              let clientResponse = {'hash': hash, 'shortURL': shortURL};
+              db.createUrl({
+                originalURL: originalURL,
+                hash: clientResponse.hash
+              }).then(data => {
+                return res.status(200).send(clientResponse);
+              }, err => {
+                console.log(err);
+                return res.status(500).send('Unexpected database error');
+              });
+            }
+          });
+        } catch (exception) {
+          console.log(exception);
+          return res.status(500).send('Unexpected server error');
+        }
       }
-      if (response && response.statusCode == 200) {
-        status = 200;
-        var hash = [...Array(8)].map(i=>(~~(Math.random()*36)).toString(36)).join(''),
-            originalHost = req.headers.host,
-            shortLink = apiPrefix + '/' + hash;
-        response = {'hash': hash, 'shortLink': shortLink};
-      }
-      return res.status(status).send(response);
     });
-  } catch (exception) {
-    console.log(exception);
-    return res.status(500).send('Unexpected error').end();
+  } else if (req.body.shortURL) {
+    let shortURL = req.body.originalURL;
   }
 });
 

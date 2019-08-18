@@ -46,7 +46,6 @@
     "react-hot-loader": "^4.12.11",
     "request": "^2.88.0",
     "style-loader": "^1.0.0",
-    "url-loader": "^2.1.0",
-    "url-parse": "^1.4.7"
+    "url-loader": "^2.1.0"
   }
 }

@@ -7,7 +7,7 @@ const Form = CreateReactClass({
       <form action="/">
         <div>
           <label>Original URL
-            <input name="originalUrl" type="text" onChange={ this.props.handleChangeOriginalURL } value={ this.props.originalLink }/>
+            <input name="originalUrl" type="text" onChange={ this.props.handleChangeOriginalURL } value={ this.props.originalURL }/>
           </label>
           <button type="button" onClick={ this.props.handleSendOriginalURL }>Send</button>
         </div>
@@ -19,7 +19,7 @@ const Form = CreateReactClass({
         </div>
         <div>
           <h3>Processed short URL:</h3>
-          <div>{ this.props.shortLink }</div>
+          <div>{ this.props.shortURL }</div>
         </div>
         <div>
           <h3>Errors:</h3>
