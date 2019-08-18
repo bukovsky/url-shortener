@@ -1,14 +1,18 @@
 import express from "express";
+import cors from 'cors'; // разрешает использовать междоменные ajax запросы
+import parse from 'url-parse';
+import request from 'request';
 
 import bodyParser from "body-parser";
 
-import {serverPort} from "../config/config.json";
+import {serverPort, apiPrefix} from "../config/config.json";
 
 import * as db from "./models/Shortener.js";
 
 db.setUpConnection();
 
 const app = express();
+app.use(cors());
 const router = express.Router();
 
 // Приложение
@@ -23,7 +27,30 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-  db.createUrl(req.body).then(() => res.send('Ссылка успешно добавлена'), err => res.send('Ошибка: '+err));
+//  db.createUrl(req.body).then(() => res.send('Ссылка успешно добавлена'), err => res.send('Ошибка: '+err));
+  try {
+    var result = parse(req.body.originalLink, true),
+        status = 200,
+        response = ''; // The second argument for a query parsing
+    request(req.body.originalLink, function (error, response, body) {
+      if (error !== undefined && error !== null) {
+        status = 400;
+        response = 'URL is not valid';
+        console.error('error:', error);
+      }
+      if (response && response.statusCode == 200) {
+        status = 200;
+        var hash = [...Array(8)].map(i=>(~~(Math.random()*36)).toString(36)).join(''),
+            originalHost = req.headers.host,
+            shortLink = apiPrefix + '/' + hash;
+        response = {'hash': hash, 'shortLink': shortLink};
+      }
+      return res.status(status).send(response);
+    });
+  } catch (exception) {
+    console.log(exception);
+    return res.status(500).send('Unexpected error').end();
+  }
 });
 
 // Маршрутизация

@@ -4,7 +4,8 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "webpack-dev-server --debug --hot --port 8090 --host 0.0.0.0"
+    "test": "",
+    "start": "webpack-dev-server --debug --hot --content-base public --port 8090 --host localhost"
   },
   "repository": {
     "type": "git",
@@ -17,9 +18,13 @@
   },
   "homepage": "https://github.com/bukovsky/url-shortener#readme",
   "dependencies": {
+    "axios": "^0.19.0",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "mongodb": "^3.3.0",
     "mongoose": "^5.6.9",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.8.0"
@@ -28,6 +33,20 @@
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5"
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "create-react-class": "^15.6.3",
+    "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
+    "json-loader": "^0.5.7",
+    "less": "^3.10.0",
+    "less-loader": "^5.0.0",
+    "postcss-loader": "^3.0.0",
+    "react-hot-loader": "^4.12.11",
+    "request": "^2.88.0",
+    "style-loader": "^1.0.0",
+    "url-loader": "^2.1.0",
+    "url-parse": "^1.4.7"
   }
 }
