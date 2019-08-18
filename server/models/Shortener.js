@@ -17,7 +17,7 @@ export function getAllDocuments() {
 export function findOriginalURL(url) {
   return Shortener.findOne({
       originalUrl: url
-    }, 'hash _id').exec(); // возвращаем промисы
+    }, 'hash _id').exec();
 }
 
 export function createUrl(data) {
@@ -26,7 +26,7 @@ export function createUrl(data) {
     hash: data.hash,
     createdAt: new Date()
   });
-  return url.save(); // возвращаем промисы
+  return url.save();
 }
 
 export function updateUrlById(data) {
@@ -40,8 +40,8 @@ export function findHash(hash) {
 }
 
 export function deleteUrl(id) { // может понадобиться в будущем для удаления ссылки по истечении времени
-  return Shortener.findById(id).remove(); // возвращаем промисы
+  return Shortener.findById(id).remove();
 }
-export function deleteAllUrls() { // может понадобиться в будущем для удаления ссылки по истечении времени
-  return Shortener.deleteMany({originalUrl: 'http://yo.ru'}); // возвращаем промисы
+export function deleteAllUrls() { 
+  return Shortener.deleteMany({originalUrl: 'http://yo.ru'});
 }

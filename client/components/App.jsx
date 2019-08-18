@@ -13,14 +13,17 @@ const App = CreateReactClass({
       originalURL: '',
       shortURL: '',
       hash: '',
-      errors: ''
+      errors: '',
+      notifications: ''
     };
   },
   render() {
     return (
-      <div className='app'>
-        <h2 className='app__header'>URL Shortener</h2>
-        <Form errors={ this.state.errors } handleSendOriginalURL={ this.sendOriginalURL } handleChangeOriginalURL={ this.changeOriginalURL } handleHash={ this.sendHash } handleChangeHash={ this.changeHash } originalURL={ this.state.originalURL } shortURL={ this.state.shortURL } hash={ this.state.hash } />
+      <div className='app row'>
+        <div className="col-md-12">
+          <h2>URL Shortener</h2>
+          <Form errors={ this.state.errors } notifications={ this.state.notifications } handleSendOriginalURL={ this.sendOriginalURL } handleChangeOriginalURL={ this.changeOriginalURL } handleHash={ this.sendHash } handleChangeHash={ this.changeHash } originalURL={ this.state.originalURL } shortURL={ this.state.shortURL } hash={ this.state.hash } />
+        </div>
       </div>
     );
   },
@@ -28,6 +31,7 @@ const App = CreateReactClass({
     this.setState({originalURL: event.target.value});
   },
   sendOriginalURL() {
+    this.setState({ shortURL: '', errors: '', notifications: '' });
     axios.post(
       'http://localhost:8080/', 
       { 
@@ -35,15 +39,16 @@ const App = CreateReactClass({
         "originalURL": this.state.originalURL 
       }
     ).then(response => {
-      this.setState({ shortURL: response.data.shortURL, hash: response.data.hash, errors: ''});
+      this.setState({ shortURL: response.data.shortURL, hash: response.data.hash, errors: '', notifications: response.data.notifications });
     }, err => {
-      this.setState({ shortURL: '', errors: err.response.data, hash: '' });
+        this.setState({ shortURL: '', errors: (err.response)? err.response.data : 'Error: Network Error', hash: '', notifications: '' });
     });
   },
   changeHash(event) {
-    this.setState({hash: event.target.value});
+    this.setState({ hash: event.target.value });
   },
   sendHash() {
+    this.setState({ shortURL: '', errors: '', notifications: '' });
     axios.post(
       'http://localhost:8080/', 
       { 
@@ -52,13 +57,13 @@ const App = CreateReactClass({
         "originalUrl": this.state.originalURL
       }
     ).then(response => {
-      this.setState({ shortURL: response.data.shortURL, errors: ''});
+      this.setState({ shortURL: response.data.shortURL, errors: '', notifications: response.data.notifications });
     }, err => {
-      this.setState({ shortURL: '', errors: err.response.data });
+        this.setState({ shortURL: '', errors: (err.response)? err.response.data : 'Error: Network Error', notifications: '' });
     });
   },
   changeShortURL(event) {
-    this.setState({shortlURL: event.target.value});
+    this.setState({ shortlURL: event.target.value });
   }
 });
 
