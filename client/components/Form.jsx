@@ -12,7 +12,7 @@ const Form = CreateReactClass({
           <button type="button" onClick={ this.props.handleSendOriginalURL }>Send</button>
         </div>
         <div>
-          <label>Short URL
+          <label>Short link code
             <input name="shortUrl" type="text" onChange={ this.props.handleChangeHash } value={ this.props.hash }/>
           </label>
           <button type="button" onClick={ this.props.handleHash }>Send</button>

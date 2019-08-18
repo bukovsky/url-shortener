@@ -21,13 +21,9 @@ app.listen(serverPort, ()=>{
   console.log(`Server is up and running on port ${serverPort}`); // `` - позволяет выводить переменные в ${}
 });
 
-app.get('/', (req, res) => {
-  db.listOriginalUrls().then(data => res.send(data)); // благодаря mongoos запросы к ДБ возвращают промисы
-});
-
 app.post('/', (req, res) => {
 //  db.createUrl(req.body).then(() => res.send('Ссылка успешно добавлена'), err => res.send('Ошибка: '+err));
-  if (req.body.originalURL) {
+  if (req.body.type == "getLinkFromOriginal") {
     let originalURL = req.body.originalURL;
     db.findOriginalURL(originalURL).then(data => {
       if (data && data.hash) {
@@ -51,25 +47,77 @@ app.post('/', (req, res) => {
               }).then(data => {
                 return res.status(200).send(clientResponse);
               }, err => {
-                console.log(err);
+                console.error('error:', error);
                 return res.status(500).send('Unexpected database error');
               });
             }
           });
         } catch (exception) {
-          console.log(exception);
+          console.error('error:', exception);
           return res.status(500).send('Unexpected server error');
         }
       }
     });
-  } else if (req.body.shortURL) {
-    let shortURL = req.body.originalURL;
+  } else if (req.body.type == "getLinkFromHash") {
+    let shortURL = apiPrefix + '/' + req.body.hash,
+        clientResponse = {'shortURL': shortURL},
+        originalURL = req.body.originalUrl;
+    db.findHash(req.body.hash).then(data => {
+      if (data) {
+        return res.status(400).send('This short link is already attached');
+      } else {
+        db.getAllDocuments().then(data=>console.log(data));
+        db.findOriginalURL(originalURL).then(data => {
+          if (data && data._id) {
+            console.log(data._id);
+            db.updateUrlById({
+              _id: data._id,
+              hash: req.body.hash
+            }).then(data => {
+              return res.status(200).send(clientResponse);
+            }, err => {
+              console.error('error:', error);
+              return res.status(500).send('Unexpected database error');
+            });
+          } else {
+            db.createUrl({
+              originalURL: req.body.originalUrl,
+              hash: req.body.hash
+            }).then(data => {
+              return res.status(200).send(clientResponse);
+            }, err => {
+              console.error('error:', error);
+              return res.status(500).send('Unexpected database error');
+            });
+          }
+        }, err => {
+          console.error('error:', error);
+          return res.status(500).send('Unexpected database error');
+        });
+      }
+    }, err => {
+      console.error('error:', error);
+      return res.sendStatus(400);
+    });
   }
 });
 
 // Маршрутизация
-router.get('/:shortUrl', (req, res) => {
-  
+router.get('/:hash', (req, res) => {
+  db.findHash(req.params.hash).then(data => {
+    if (data && data.originalUrl) {
+      res.redirect(data.originalUrl);
+    } else {
+      return res.sendStatus(404);
+    }
+  }, err => {
+    console.log(err);
+    return res.sendStatus(500);
+  });
+});
+
+router.get('/', (req, res) => {
+  res.redirect('http://localhost:8090/')
 });
 
 // Применяем маршрутизацию к приложению

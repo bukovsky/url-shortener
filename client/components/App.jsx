@@ -28,10 +28,10 @@ const App = CreateReactClass({
     this.setState({originalURL: event.target.value});
   },
   sendOriginalURL() {
-    // Меняем состояние приложения
     axios.post(
       'http://localhost:8080/', 
       { 
+        "type": "getLinkFromOriginal",
         "originalURL": this.state.originalURL 
       }
     ).then(response => {
@@ -44,17 +44,18 @@ const App = CreateReactClass({
     this.setState({hash: event.target.value});
   },
   sendHash() {
-    // Меняем состояние приложения
-//    axios.post(
-//      'http://localhost:8080/', 
-//      { 
-//        "originalURL": this.state.originalURL 
-//      }
-//    ).then(response => {
-//      this.setState({ shortURL: response.data.shortURL, hash: response.data.hash, errors: ''});
-//    }, err => {
-//      this.setState({ shortURL: '', errors: err.response.data });
-//    });
+    axios.post(
+      'http://localhost:8080/', 
+      { 
+        "type": "getLinkFromHash",
+        "hash": this.state.hash,
+        "originalUrl": this.state.originalURL
+      }
+    ).then(response => {
+      this.setState({ shortURL: response.data.shortURL, errors: ''});
+    }, err => {
+      this.setState({ shortURL: '', errors: err.response.data });
+    });
   },
   changeShortURL(event) {
     this.setState({shortlURL: event.target.value});

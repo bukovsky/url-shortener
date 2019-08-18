@@ -10,10 +10,14 @@ export function setUpConnection() {
   mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, { useNewUrlParser: true }); // Node попросил использовать useNewUrlParser, т.к. старый способ не будет поддерживаться в следующих версиях
 }
 
+export function getAllDocuments() {
+  return Shortener.find();
+}
+
 export function findOriginalURL(url) {
   return Shortener.findOne({
       originalUrl: url
-    }, 'hash').exec(); // возвращаем промисы
+    }, 'hash _id').exec(); // возвращаем промисы
 }
 
 export function createUrl(data) {
@@ -25,6 +29,19 @@ export function createUrl(data) {
   return url.save(); // возвращаем промисы
 }
 
+export function updateUrlById(data) {
+  return Shortener.updateOne({ _id: data._id }, { hash: data.hash });
+}
+
+export function findHash(hash) {
+  return Shortener.findOne({
+    hash: hash
+  }, 'originalUrl').exec();
+}
+
 export function deleteUrl(id) { // может понадобиться в будущем для удаления ссылки по истечении времени
   return Shortener.findById(id).remove(); // возвращаем промисы
+}
+export function deleteAllUrls() { // может понадобиться в будущем для удаления ссылки по истечении времени
+  return Shortener.deleteMany({originalUrl: 'http://yo.ru'}); // возвращаем промисы
 }
