@@ -14,10 +14,22 @@ export function getAllDocuments() {
   return Shortener.find();
 }
 
+export function deleteUrl(id) { // может понадобиться в будущем для удаления ссылки по истечении времени
+  return Shortener.findById(id).remove();
+}
+
+export function deleteAllUrls() { 
+  return Shortener.deleteMany({originalUrl: 'http://yo.ru'});
+}
+
+export function incrementVisitsCount(id) { 
+  return Shortener.updateOne({_id :id}, {$inc : {'visitsCount' : 1}});
+}
+
 export function findOriginalURL(url) {
   return Shortener.findOne({
       originalUrl: url
-    }, 'hash _id').exec();
+    }).exec();
 }
 
 export function createUrl(data) {
@@ -36,12 +48,5 @@ export function updateUrlById(data) {
 export function findHash(hash) {
   return Shortener.findOne({
     hash: hash
-  }, 'originalUrl').exec();
-}
-
-export function deleteUrl(id) { // может понадобиться в будущем для удаления ссылки по истечении времени
-  return Shortener.findById(id).remove();
-}
-export function deleteAllUrls() { 
-  return Shortener.deleteMany({originalUrl: 'http://yo.ru'});
+  }, 'originalUrl _id').exec();
 }

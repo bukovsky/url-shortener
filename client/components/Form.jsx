@@ -9,21 +9,23 @@ const Form = CreateReactClass({
         <div className="form-group">
           <label htmlFor="originalURL">Original URL</label>
           <div className="input-group">
-              <input id="originalURL" className="form-control" name="originalUrl" type="text" onChange={ this.props.handleChangeOriginalURL } value={ this.props.originalURL }/>
+              <input id="originalURL" className="form-control" name="originalUrl" type="text" onChange={ this.props.handleChangeOriginalURL } value={ this.props.originalURL } disabled={this.props.disabled}/>
             <div className="input-group-append">
-              <button className="btn btn-primary" type="button" onClick={ this.props.handleSendOriginalURL }>Get link</button>
+              <button className="btn btn-primary" type="button" onClick={ this.props.handleSendOriginalURL } disabled={this.props.disabled}>Get link</button>
             </div>
           </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="shortCode">Short link code</label>
-          <div className='input-group'>
-            <input id="shortCode" className="form-control" name="shortUrl" type="text" onChange={ this.props.handleChangeHash } value={ this.props.hash }/>
-            <div className="input-group-append">
-              <button className="btn btn-primary" type="button" onClick={ this.props.handleHash }>Attach short code</button>
+        {this.props.originalURL != '' &&
+          <div className="form-group">
+            <label htmlFor="shortCode">Short link code</label>
+            <div className='input-group'>
+              <input id="shortCode" className="form-control" name="shortUrl" type="text" onChange={ this.props.handleChangeHash } value={ this.props.hash } disabled={this.props.disabled}/>
+              <div className="input-group-append">
+                <button className="btn btn-primary" type="button" onClick={ this.props.handleHash } disabled={this.props.disabled}>Attach short code</button>
+              </div>
             </div>
           </div>
-        </div>
+        }
         {this.props.notifications != '' &&
           <div className="form-group text-info">{ this.props.notifications }</div>
         }

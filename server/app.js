@@ -34,7 +34,7 @@ app.post('/', (req, res) => {
           request(originalURL, function (error, response, body) {
             if (error !== undefined && error !== null) {
               console.error('error:', error);
-              return res.status(400).send('URL is not valid');
+              return res.status(400).send('Resourse doesn\'t exist or blocks request.');
             }
             if (response && response.statusCode == 200) {
               let hash = [...Array(8)].map(i=>(~~(Math.random()*36)).toString(36)).join(''),
@@ -44,19 +44,19 @@ app.post('/', (req, res) => {
                 originalURL: originalURL,
                 hash: clientResponse.hash
               }).then(data => {
-                clientResponse.notifications = 'Short link is successfully generated';
+                clientResponse.notifications = 'Short link is successfully generated.';
                 return res.status(200).send(clientResponse);
               }, err => {
                 console.error('error:', error);
-                return res.status(500).send('Unexpected database error');
+                return res.status(500).send('Unexpected database error.');
               });
             } else {
-              return res.status(400).send('Resource is not found');
+              return res.status(400).send('Resource is not found.');
             }
           });
         } catch (exception) {
           console.error('error:', exception);
-          return res.status(500).send('Unexpected server error');
+          return res.status(500).send('Unexpected server error.');
         }
       }
     });
@@ -66,52 +66,43 @@ app.post('/', (req, res) => {
         originalURL = req.body.originalUrl;
     db.findHash(req.body.hash).then(data => {
       if (data) {
-        return res.status(400).send('This short code is already attached');
+        return res.status(400).send('This short code is already attached.');
       } else {
         if (req.body.hash == '')
-          return res.status(400).send('Short code is empty');
-        if (originalURL) {
-          request(originalURL, function (error, response, body) {
-            if (error !== undefined && error !== null) {
+          return res.status(400).send('Short code is empty.');
+        if (!originalURL)
+          return res.status(400).send('Original URL is empty.');
+        request(originalURL, function (error, response, body) {
+          if (error !== undefined && error !== null) {
+            console.error('error:', error);
+            return res.status(400).send('Resourse doesn\'t exist or blocks request.');
+          }
+          if (response && response.statusCode == 200) {
+            db.findOriginalURL(originalURL).then(data => {
+              if (data && data._id) {
+                clientResponse.shortURL = apiPrefix + '/' + data.hash;
+                clientResponse.errors = 'Short link is already exist.';
+                return res.status(200).send(clientResponse);
+              } else {
+                db.createUrl({
+                  originalURL: req.body.originalUrl,
+                  hash: req.body.hash
+                }).then(data => {
+                  clientResponse.notifications = 'Short link is successfully generated.';
+                  return res.status(200).send(clientResponse);
+                }, err => {
+                  console.error('error:', err);
+                  return res.status(500).send('Unexpected database error.');
+                });
+              }
+            }, err => {
               console.error('error:', error);
-              return res.status(400).send('URL is not valid');
-            }
-            if (response && response.statusCode == 200) {
-              db.findOriginalURL(originalURL).then(data => {
-                if (data && data._id) {
-                  db.updateUrlById({
-                    _id: data._id,
-                    hash: req.body.hash
-                  }).then(data => {
-                    clientResponse.notifications = 'Short code is successfully replaced';
-                    return res.status(200).send(clientResponse);
-                  }, err => {
-                    console.error('error:', error);
-                    return res.status(500).send('Unexpected database error');
-                  });
-                } else {
-                  db.createUrl({
-                    originalURL: req.body.originalUrl,
-                    hash: req.body.hash
-                  }).then(data => {
-                    clientResponse.notifications = 'Short link is successfully generated';
-                    return res.status(200).send(clientResponse);
-                  }, err => {
-                    console.error('error:', err);
-                    return res.status(500).send('Unexpected database error');
-                  });
-                }
-              }, err => {
-                console.error('error:', error);
-                return res.status(500).send('Unexpected database error');
-              });
-            } else {
-              return res.status(400).send('Resource is not found');
-            }
-          });
-        } else {
-          return res.status(400).send('Original URL is empty');
-        }
+              return res.status(500).send('Unexpected database error.');
+            });
+          } else {
+            return res.status(400).send('Resource is not found.');
+          }
+        });
       }
     }, err => {
       console.error('error:', error);
@@ -122,11 +113,13 @@ app.post('/', (req, res) => {
 
 // Маршрутизация
 router.get('/:hash', (req, res) => {
+  db.getAllDocuments().then(data => console.log(data));
   db.findHash(req.params.hash).then(data => {
     if (data && data.originalUrl) {
+      db.incrementVisitsCount(data._id).then();
       res.redirect(data.originalUrl);
     } else {
-      return res.status(404).send('404: Page not found');
+      return res.status(404).send('404: Page not found.');
     }
   }, err => {
     console.log(err);
