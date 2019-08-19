@@ -1,6 +1,3 @@
 node_modules
 build
-.babelrc
-babel.config.js
 package-lock.json
-postcss.config.js
