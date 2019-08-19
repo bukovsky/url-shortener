@@ -3,7 +3,7 @@
   "serverPort": "process.env.PORT || 3000",
   "db": {
     "name": "shortner",
-    "host": "localhost",
+    "host": process.env.MONGODB_URI || 'mongodb://localhost/bukovskii-url-shortener',
     "port": 27017
   }
 }
