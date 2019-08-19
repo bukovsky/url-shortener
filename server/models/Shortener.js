@@ -19,7 +19,7 @@ export function deleteUrl(id) { // может понадобиться в буд
 }
 
 export function deleteAllUrls() { 
-  return Shortener.deleteMany({originalUrl: 'http://yo.ru'});
+  return Shortener.deleteMany();
 }
 
 export function incrementVisitsCount(id) { 

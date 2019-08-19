@@ -22,6 +22,7 @@ app.listen(serverPort, ()=>{
 });
 
 app.post('/', (req, res) => {
+  db.getAllDocuments().then(data => console.log(data));
   if (req.body.type == "getLinkFromOriginal") {
     let originalURL = req.body.originalURL;
     db.findOriginalURL(originalURL).then(data => {
@@ -113,7 +114,6 @@ app.post('/', (req, res) => {
 
 // Маршрутизация
 router.get('/:hash', (req, res) => {
-  db.getAllDocuments().then(data => console.log(data));
   db.findHash(req.params.hash).then(data => {
     if (data && data.originalUrl) {
       db.incrementVisitsCount(data._id).then();
