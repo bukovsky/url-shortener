@@ -1,9 +1,9 @@
 {
-  "apiPrefix": "https://bukovskii-url-shortener.herokuapp.com/",
-  "serverPort": "process.env.PORT || 3000",
+  "apiPrefix": "https://localhost:8080/",
+  "serverPort": "8080",
   "db": {
     "name": "shortner",
-    "host": process.env.MONGODB_URI || 'mongodb://localhost/bukovskii-url-shortener',
+    "host": "localhost",
     "port": 27017
   }
 }

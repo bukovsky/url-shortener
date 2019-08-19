@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "test": "",
-    "start": "npx babel-node server/app.js"
+    "start": "webpack-dev-server --debug --hot --content-base public --port 8090 --host localhost"
   },
   "repository": {
     "type": "git",
